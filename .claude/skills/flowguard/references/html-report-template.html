@@ -1,0 +1,201 @@
+<!--
+  FlowGuard shareable report template.
+  How to fill it (see SKILL.md Step 6 and report-template.md "Shareable HTML report"):
+  - Replace every {{PLACEHOLDER}}. Write "Not provided" for unknown metadata. Never invent numbers.
+  - Blocks between "REPEAT:" and "END REPEAT" comments are copied once per item, then the comments removed.
+  - Priority classes: p0, p1, p2, p3. Classification classes: c-verified, c-inferred, c-missing, c-unknown.
+  - Escape &, <, > in all inserted text. Redact sensitive values as [REDACTED: type].
+  - Publishing as an artifact: keep the file as is; the host renders <pre class="mermaid"> natively,
+    so delete the line marked LOCAL FILE ONLY.
+  - Saving as a local .html file: keep the LOCAL FILE ONLY line and wrap the whole file in
+    <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"> ... </head><body> ... </body></html>.
+-->
+<title>{{PRODUCT}} Flow Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --bg: #f3f5f8; --surface: #ffffff; --surface-2: #e9edf3; --fg: #17212c; --muted: #566476; --line: #c9d1dc;
+  --accent: #2b55d6; --accent-soft: #e3e9fb;
+  --ok: #1f7a4d; --ok-soft: #e1f2e8; --warn: #9a6200; --warn-soft: #fbefd6;
+  --bad: #b42318; --bad-soft: #fde8e6; --unk: #5b6676; --unk-soft: #eceff3;
+  --p0: #b42318; --p1: #c4510c; --p2: #9a6200; --p3: #4d6a8a;
+  --f-body: "IBM Plex Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e141a; --surface: #161e27; --surface-2: #1d2733; --fg: #e3e9ef; --muted: #9aa8b8; --line: #34414f;
+  --accent: #7d9bff; --accent-soft: #1d2a4d;
+  --ok: #5cc98f; --ok-soft: #133224; --warn: #e8b04f; --warn-soft: #362812; --bad: #ff8a7a; --bad-soft: #3d1a17; --unk: #a3afbd; --unk-soft: #232c37;
+  --p0: #ff8a7a; --p1: #ff9f5a; --p2: #e8b04f; --p3: #8fb0d6; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e141a; --surface: #161e27; --surface-2: #1d2733; --fg: #e3e9ef; --muted: #9aa8b8; --line: #34414f;
+  --accent: #7d9bff; --accent-soft: #1d2a4d;
+  --ok: #5cc98f; --ok-soft: #133224; --warn: #e8b04f; --warn-soft: #362812; --bad: #ff8a7a; --bad-soft: #3d1a17; --unk: #a3afbd; --unk-soft: #232c37;
+  --p0: #ff8a7a; --p1: #ff9f5a; --p2: #e8b04f; --p3: #8fb0d6; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.55; margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 56px; }
+.wrap { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 1.35rem; font-weight: 700; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0; max-width: 70ch; }
+.mono, code { font-family: var(--f-mono); font-size: 0.86em; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.muted { color: var(--muted); }
+section { display: flex; flex-direction: column; gap: 14px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.meta div { background: var(--surface); padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.meta dt { font-size: 0.75rem; color: var(--muted); }
+.meta dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+.summary { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.counts { display: flex; flex-wrap: wrap; gap: 8px; }
+.count { font-family: var(--f-mono); font-size: 0.8rem; background: var(--surface-2); border-radius: 999px; padding: 3px 10px; font-variant-numeric: tabular-nums; }
+.note { font-size: 0.85rem; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; font-family: var(--f-mono); font-size: 0.74rem; font-weight: 500; border-radius: 6px; padding: 2px 8px; white-space: nowrap; }
+.p0 { color: var(--p0); background: var(--bad-soft); } .p1 { color: var(--p1); background: var(--warn-soft); }
+.p2 { color: var(--p2); background: var(--warn-soft); } .p3 { color: var(--p3); background: var(--unk-soft); }
+.c-verified { color: var(--ok); background: var(--ok-soft); } .c-inferred { color: var(--warn); background: var(--warn-soft); }
+.c-missing { color: var(--bad); background: var(--bad-soft); outline: 1px dashed var(--bad); } .c-unknown { color: var(--unk); background: var(--unk-soft); }
+.finding { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.finding .fh { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.finding .fid { font-family: var(--f-mono); color: var(--muted); }
+.finding .fh h3 { flex: 1 1 260px; }
+.finding dl { margin: 0; display: grid; grid-template-columns: 180px minmax(0, 1fr); }
+.finding dt, .finding dd { margin: 0; padding: 9px 16px; border-bottom: 1px solid var(--surface-2); }
+.finding dt { color: var(--muted); font-size: 0.86rem; }
+@media (max-width: 600px) { .finding dl { grid-template-columns: 1fr; } .finding dt { border-bottom: 0; padding-bottom: 0; } }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+th, td { text-align: left; vertical-align: top; padding: 8px 12px; border-bottom: 1px solid var(--surface-2); }
+th { font-size: 0.78rem; color: var(--muted); font-weight: 500; background: var(--surface-2); white-space: nowrap; }
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; }
+pre.mermaid { margin: 0; background: transparent; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.85rem; color: var(--muted); }
+ul.check { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+ul.check li { display: flex; gap: 10px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+ul.check li::before { content: ""; flex: none; width: 14px; height: 14px; margin-top: 4px; border: 1.5px solid var(--muted); border-radius: 3px; }
+footer { border-top: 1px solid var(--line); padding-top: 14px; font-size: 0.85rem; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FlowGuard audit · {{MODE}} mode</div>
+    <h1>{{PRODUCT}}</h1>
+    <p class="muted">{{ONE_LINE_SCOPE}}</p>
+    <dl class="meta">
+      <div><dt>Audit date</dt><dd>{{DATE_OR_NOT_PROVIDED}}</dd></div>
+      <div><dt>Requirements</dt><dd>{{REQUIREMENTS_SOURCE}}</dd></div>
+      <div><dt>Design evidence</dt><dd>{{DESIGN_EVIDENCE}}</dd></div>
+      <div><dt>Access method</dt><dd>{{ACCESS_METHOD}}</dd></div>
+    </dl>
+  </header>
+
+  <section id="summary">
+    <h2>Summary</h2>
+    <div class="summary">
+      <p>{{EXECUTIVE_SUMMARY}}</p>
+      <div class="counts">
+        <span class="count">{{N}} requirements</span>
+        <span class="count">{{N}} screens and states</span>
+        <span class="count">{{N}} transitions mapped</span>
+        <span class="count">P0 {{N}} · P1 {{N}} · P2 {{N}} · P3 {{N}}</span>
+        <span class="count">{{N}} open decisions</span>
+      </div>
+      <p class="note">Counts describe the supplied evidence. They do not measure completeness.</p>
+    </div>
+  </section>
+
+  <section id="findings">
+    <h2>Findings</h2>
+    <!-- If there are no findings, replace the repeat block with:
+         <p>No significant gaps identified in the supplied evidence.</p> followed by what was checked. -->
+    <!-- REPEAT: finding -->
+    <article class="finding">
+      <div class="fh">
+        <span class="fid">{{F_ID}}</span>
+        <h3>{{F_TITLE}}</h3>
+        <span class="chip {{P_CLASS}}">{{PRIORITY}}</span>
+        <span class="chip {{C_CLASS}}">{{CLASSIFICATION}}</span>
+      </div>
+      <dl>
+        <dt>Why this priority</dt><dd>{{PRIORITY_JUSTIFICATION}}</dd>
+        <dt>Evidence</dt><dd>{{EVIDENCE}}</dd>
+        <dt>Expected</dt><dd>{{EXPECTED}}</dd>
+        <dt>Observed</dt><dd>{{OBSERVED}}</dd>
+        <dt>User impact</dt><dd>{{USER_IMPACT}}</dd>
+        <dt>Fix</dt><dd>{{FIX}}</dd>
+        <dt>How to confirm</dt><dd>{{VALIDATION}}</dd>
+        <dt>Related IDs</dt><dd class="mono">{{RELATED_IDS}}</dd>
+      </dl>
+    </article>
+    <!-- END REPEAT -->
+  </section>
+
+  <section id="flow">
+    <h2>Flow</h2>
+    <div class="diagram"><pre class="mermaid">{{MERMAID_SOURCE}}</pre></div>
+    <div class="legend"><span>Solid arrow: verified</span><span>Dashed arrow: inferred</span><span>"?": condition unknown</span><span>Dashed red box: missing from supplied evidence</span></div>
+  </section>
+
+  <section id="screens">
+    <h2>Screens and states</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Evidence</th><th>Label</th><th>Notes</th></tr></thead>
+      <tbody>
+        <!-- REPEAT: screen -->
+        <tr><td class="mono">{{S_ID}}</td><td>{{S_NAME}}</td><td>{{S_CATEGORY}}</td><td>{{S_EVIDENCE}}</td><td><span class="chip {{C_CLASS}}">{{CLASSIFICATION}}</span></td><td>{{S_NOTES}}</td></tr>
+        <!-- END REPEAT -->
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="transitions">
+    <h2>Transitions</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>ID</th><th>From</th><th>Trigger</th><th>Condition</th><th>To</th><th>Label</th><th>Note</th></tr></thead>
+      <tbody>
+        <!-- REPEAT: transition -->
+        <tr><td class="mono">{{T_ID}}</td><td>{{FROM}}</td><td>{{TRIGGER}}</td><td>{{CONDITION}}</td><td>{{TO}}</td><td><span class="chip {{C_CLASS}}">{{CLASSIFICATION}}</span></td><td>{{T_NOTE}}</td></tr>
+        <!-- END REPEAT -->
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="checklist">
+    <h2>Validation checklist</h2>
+    <ul class="check">
+      <!-- REPEAT: check --><li>{{CHECK_ITEM}}</li><!-- END REPEAT -->
+    </ul>
+  </section>
+
+  <section id="decisions">
+    <h2>Open decisions</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>ID</th><th>Question</th><th>Why it matters</th><th>Suggested owner</th><th>Default</th></tr></thead>
+      <tbody>
+        <!-- REPEAT: question -->
+        <tr><td class="mono">{{Q_ID}}</td><td>{{QUESTION}}</td><td>{{WHY}}</td><td>{{OWNER}}</td><td>{{DEFAULT}}</td></tr>
+        <!-- END REPEAT -->
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="limits">
+    <h2>Scope and limitations</h2>
+    <ul>
+      <li>This audit reviewed static design evidence. It does not verify live product behavior.</li>
+      <!-- REPEAT: limitation --><li>{{LIMITATION}}</li><!-- END REPEAT -->
+      <li>FlowGuard does not guarantee a flow is complete and does not replace usability testing.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>Generated with FlowGuard, a Claude Code skill by Satyam Tiwari.</span>
+    <span>Labels: Verified (seen in the evidence) · Inferred (reasoned from it) · Missing from supplied evidence (looked, not found) · Unknown (not enough to tell).</span>
+  </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script><script>mermaid.initialize({ startOnLoad: true, theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "default" });</script><!-- LOCAL FILE ONLY -->

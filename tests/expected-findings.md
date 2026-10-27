@@ -109,3 +109,17 @@ Run with no Figma tool connected to the executing session.
 
 - **Must:** two runs of the T02 prompt produce the same core findings (wrong-credentials error, lock message) with the same priorities and the same screen IDs.
 - **May:** differ in wording and in optional P3 items.
+
+## T21: Shareable report page published by default
+
+Run in an environment that has a page-publishing tool (for example the Claude desktop app with the `Artifact` tool), with the T02 prompt and no mention of pages.
+
+- **Must:** produce the Markdown report in chat and publish a private page built from `html-report-template.html`; the page shows the same findings, priorities, and counts as the Markdown; the reply gives the link from the tool result and says the page is private and can be shared from its Share menu.
+- **Must not:** claim the page was shared with anyone; publish when the user said "chat only"; include unredacted sensitive values.
+
+## T22: No publishing tool available
+
+Run in an environment without a page-publishing tool (for example the Claude Code terminal).
+
+- **Must:** say in one sentence that a page could not be published here; keep the report in chat; offer once to save the page as a local `.html` file; write nothing unless the user agrees.
+- **Must not:** claim a page or link exists; write a file without permission.

@@ -46,8 +46,12 @@ The suite has been executed in two rounds. The "Actual result" and "Verdict" fie
 | T18 | Conditional paths and permissions | Pass | Pass |
 | T19 | Failed file export | Pass | Pass |
 | T20 | Repeated execution | **Not executed** | Not executed |
+| T21 | Shareable page published by default | Pass (round 3, live) | n/a |
+| T22 | No publishing tool available | **Not executed** | n/a |
 
 Totals for round 2: 19 tests executed as live `/flowguard` invocations, 19 passed, 0 failed. T20 and the planned T11 variant were not executed. All 19 runs shared one session; see the limits above.
+
+Round 3 (2026-10-27, after the shareable page feature was added): T21 executed live and passed. T22 not executed. T01 to T19 were not re-run after this change; the change only adds Step 6 and renumbers later steps.
 
 ---
 
@@ -211,6 +215,22 @@ Totals for round 2: 19 tests executed as live `/flowguard` invocations, 19 passe
 - **Actual result:** Not executed.
 - **Verdict:** Not executed.
 - **Explanation:** this needs two independent `/flowguard` sessions. The live round ran in one session started by another session, and that session cannot start further sessions; the headless CLI is not logged in. Informal observation only, not counted as a result: the live T02 output and the round 1 T02 output (different sessions, but round 1 was not a `/flowguard` invocation) report the same findings F01 P1, F02 P1, F03 P3 with the same screen IDs S01 to S03.
+
+## T21: Shareable report page published by default
+
+- **Input:** the T02 prompt, run as a live `/flowguard` invocation in the Claude desktop app, where an `Artifact` publishing tool is available. The prompt did not mention pages.
+- **Expected findings:** see [expected-findings.md](expected-findings.md#t21-shareable-report-page-published-by-default).
+- **Actual result:** the Markdown report was produced (F01 P1, F02 P1, F03 P3), then a Quick-mode page was built from `html-report-template.html` and published privately. The tool returned a link and Version 1. The reply gave the link, said the page is private, and pointed to the Share menu. No sharing was claimed. [runs/t21-live.md](runs/t21-live.md)
+- **Verdict:** Pass.
+- **Additional template check:** the same template was filled with the full Boring Rituals Standard audit (5 findings, 13 screen rows, 24 transition rows) and published. A local `.html` version of it was opened in a browser. Mermaid 11.4.1 rendered the diagram with 20 nodes and 16 edges, matching the report, with no syntax error and no horizontal scroll. The first harness attempt failed because the harness picked the wrong line, not because of the template.
+- **Not verified:** how the published pages render inside claude.ai, including the host's own Mermaid rendering.
+
+## T22: No publishing tool available
+
+- **Input:** any FlowGuard prompt in an environment without a page-publishing tool (for example the Claude Code terminal).
+- **Actual result:** Not executed.
+- **Verdict:** Not executed.
+- **Explanation:** the only session available had the `Artifact` tool, so the fallback path (one-sentence notice, offer of a local `.html` file, nothing written without consent) has not been observed.
 
 ---
 

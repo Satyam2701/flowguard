@@ -12,6 +12,7 @@ Markdown is always produced. Choose the template that matches the mode or reques
 - [Developer-ready issue format](#developer-ready-issue-format)
 - [Mermaid rules](#mermaid-rules)
 - [JSON export schema](#json-export-schema)
+- [Shareable HTML report](#shareable-html-report)
 
 ## Standard report
 
@@ -270,3 +271,15 @@ Produce JSON only when requested. Use this structure, include every top-level ke
   "limitations": ["string"]
 }
 ```
+
+## Shareable HTML report
+
+Every run also produces a shareable page unless the user opts out (see SKILL.md Step 6). Build it from [html-report-template.html](html-report-template.html):
+
+- Same content and counts as the Markdown report. Quick mode keeps only summary, findings, and limitations.
+- Copy each `REPEAT` block once per item and remove the marker comments. Replace every `{{PLACEHOLDER}}`; use `Not provided` for unknown metadata.
+- Use the classification classes `c-verified`, `c-inferred`, `c-missing`, `c-unknown` and the priority classes `p0` to `p3` so labels look the same in every report.
+- Escape `&`, `<`, and `>` in inserted text. Mermaid source goes inside `<pre class="mermaid">` unchanged, apart from escaping.
+- Published page: delete the line marked `LOCAL FILE ONLY`, because the host renders Mermaid itself.
+- Local `.html` file: keep that line and wrap the file in a full HTML document as the template comment describes.
+- If there are no findings, replace the findings block with "No significant gaps identified in the supplied evidence." and what was checked.

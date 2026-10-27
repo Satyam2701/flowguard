@@ -55,6 +55,7 @@ Designers also work with very different levels of input. Some have a full PRD. M
 - Produces findings with evidence, expected versus observed behavior, user impact, fix, classification, and validation steps.
 - Prioritizes with a written rubric (P0 to P3) that forbids critical severity on speculation.
 - Outputs Quick, Standard, Deep, planning, and diagram-only reports in Markdown, with Mermaid diagrams and optional JSON.
+- Publishes every report as a private, shareable page when your environment supports it (see [Shareable report pages](#shareable-report-pages)).
 - Writes files only when asked, never overwrites silently, and redacts sensitive data.
 
 ## Who it is for
@@ -143,6 +144,17 @@ Invoke with `/flowguard`, followed by what you want in plain language. Claude ma
 
 Mode changes depth, not the standard of evidence.
 
+### Shareable report pages
+
+After each audit, FlowGuard also turns the findings into a web page you can send to your team: summary, ranked findings, flow diagram, screen and transition tables, checklist, and open decisions.
+
+| Where you run it | What happens |
+| --- | --- |
+| Claude desktop app or claude.ai (an `Artifact` publishing tool is available) | The page is published **privately** and you get a link. Only you can open it until you share it from the page's Share menu. Running the audit again in the same session updates the same page. |
+| Claude Code terminal or anywhere without a publishing tool | FlowGuard says it can't publish here and offers to save the same page as a `.html` file next to the report. Nothing is written unless you agree. |
+
+Say "chat only" or "no page" to skip it. If your material is confidential or under NDA, FlowGuard asks before publishing, because a published page leaves your machine even while it is private.
+
 ## Flexible input support
 
 | Type | Examples | Notes |
@@ -225,11 +237,12 @@ Full rules are in [severity-rubric.md](.claude/skills/flowguard/references/sever
 - Very large flows are audited in sections; coverage is stated in the report.
 - No completeness percentage is produced in version 1, by design.
 - Output quality depends on the model and on the clarity of the inputs. Two runs on the same input may differ in wording and in optional low-priority items.
+- Shareable pages need a publishing tool in your environment; the Claude Code terminal gets the local `.html` fallback instead.
 - Live `/flowguard` invocations have been tested in one shared session; one fresh session per test and repeatability across sessions have not yet been tested (see [Testing](#testing)).
 
 ## Testing
 
-The suite is Markdown-based: [tests/test-cases.md](tests/test-cases.md) lists 20 scenarios, [tests/expected-findings.md](tests/expected-findings.md) defines pass criteria, and [tests/fixtures/](tests/fixtures/) holds the inputs.
+The suite is Markdown-based: [tests/test-cases.md](tests/test-cases.md) lists 22 scenarios, [tests/expected-findings.md](tests/expected-findings.md) defines pass criteria, and [tests/fixtures/](tests/fixtures/) holds the inputs.
 
 Current status, stated plainly:
 
@@ -239,6 +252,7 @@ Current status, stated plainly:
 - The two defects found in the earlier author-executed round (a summary count that did not match the diagram, and an incomplete JSON export) did not recur in the live round.
 - Mermaid diagrams written during the live round were checked by rule and by edge counts but not rendered, because no Mermaid renderer was available to that session. Diagrams from the earlier round were rendered with Mermaid 11.4.1. Live JSON exports were parsed with `python3 -m json.tool`.
 - The earlier author-executed round (the skill instructions followed by hand, before the skill could be loaded) is kept in `tests/runs/tNN-run.md` for comparison.
+- **Shareable pages (round 3):** T21 passed live: the skill published a private page and returned its link. The page template was also rendered locally with a full audit, and its diagram rendered correctly. T22 (no publishing tool, local `.html` fallback) has not been executed, and how published pages render inside claude.ai was not checked.
 
 To run a test yourself, open the repository in a fresh Claude Code session and run a prompt such as:
 
@@ -251,7 +265,7 @@ Then compare the output with the matching section of `expected-findings.md` and 
 ## Privacy and safe file handling
 
 - FlowGuard reads only the files you point it to, using Claude Code's own tools and permissions.
-- It sends nothing to external services beyond the tools you have connected (for example a Figma MCP server you set up).
+- It sends nothing to external services beyond the tools you have connected (for example a Figma MCP server you set up). The one exception is the shareable page: where a publishing tool exists, the report is published as a private page on claude.ai. Say "chat only" to skip it.
 - Secrets, personal data, and customer data found in artifacts are redacted as `[REDACTED: type]` in reports. If such data appears inside a design, FlowGuard raises a finding.
 - It writes files only when you ask or have authorized it, in the location you name.
 - It never overwrites an existing report; it writes `-v2`, `-v3`, and so on.
@@ -270,7 +284,8 @@ flowguard/
 │               ├── flow-audit-framework.md
 │               ├── state-checklist.md
 │               ├── severity-rubric.md
-│               └── report-template.md
+│               ├── report-template.md
+│               └── html-report-template.html
 ├── examples/
 │   ├── sample-requirements.md
 │   ├── sample-screen-inventory.md
