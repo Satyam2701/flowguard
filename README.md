@@ -95,7 +95,7 @@ mkdir -p ~/.claude/skills && cp -R path/to/flowguard/.claude/skills/flowguard ~/
 Clone the repository and start Claude Code in its root. The skill is already at `.claude/skills/flowguard/`.
 
 ```bash
-git clone https://github.com/<your-account>/flowguard.git
+git clone https://github.com/Satyam2701/flowguard.git
 ```
 
 Start a **new** Claude Code session after installing so the skill is discovered. Type `/` and look for `flowguard` in the menu to confirm it loaded.
@@ -190,7 +190,9 @@ FlowGuard does not require Figma. When you share a Figma link, it:
 
 It handles missing tools, expired authentication, private files, invalid links, rate limits, and partial responses by explaining what happened. It never asks for credentials or changes authentication settings.
 
-**Limitations observed during testing:** with the official Figma MCP server connected, a malformed file key was rejected as invalid, and a file the account could not open returned an error saying edit access was required. Access requirements depend on Figma's server and your plan; check Figma's documentation for current rules. Successful retrieval from a real Figma file has **not** been tested with this skill yet.
+**Limitations observed during testing:** with the official Figma MCP server connected, a malformed file key was rejected as invalid, and a file the account could not open returned an error saying edit access was required. Access requirements depend on Figma's server and your plan; check Figma's documentation for current rules.
+
+**Tested on a real Figma file:** FlowGuard audited a real 15-page iOS app design file through the official Figma MCP server. It read the page list, the layer structure of 14 pages, and the full text of selected designer notes. The server did not return prototype connections, so FlowGuard read the intended links from hotspot layer names and labelled them Inferred. It did not request screenshots in that run, so it judged the design from layer names and text, not visuals.
 
 ## Example report
 
@@ -314,9 +316,8 @@ Contributions are welcome.
 ## Before public release
 
 - Run T20 (two separate sessions) and, ideally, each test in its own fresh session, then update the recorded results.
-- Test with real image and PDF exports and, if possible, a real Figma file you have access to.
+- Test with real image and PDF exports. (A real Figma file has been tested.)
 - Check that the repository name `flowguard` is available on your hosting platform and search for existing trademarks or products named FlowGuard. The name has not been cleared.
-- Replace `<your-account>` in the clone command with the real repository location.
 
 ## License
 
