@@ -36,7 +36,7 @@ The suite has been executed in two rounds. The "Actual result" and "Verdict" fie
 | T08 | Duplicate screenshots | Pass | Pass |
 | T09 | Optional state not represented | Pass | Pass |
 | T10 | Contradictory requirements | Pass | Pass |
-| T11 | Unavailable Figma integration | Pass, access-failure variant only; "no Figma tool" variant Not executed | Pass, variant only |
+| T11 | Unavailable Figma integration | Pass (access-failure variant in round 2; "no Figma tool" variant in round 4) | Pass, variant only |
 | T12 | Large flow with multiple branches | Pass (counts consistent; round 1 defect did not recur) | Pass with defect, fixed |
 | T13 | Accessibility uncertainty | Pass | Pass |
 | T14 | No significant gaps | Pass | Pass |
@@ -45,13 +45,15 @@ The suite has been executed in two rounds. The "Actual result" and "Verdict" fie
 | T17 | Design conflicts with requirements | Pass | Pass |
 | T18 | Conditional paths and permissions | Pass | Pass |
 | T19 | Failed file export | Pass | Pass |
-| T20 | Repeated execution | **Not executed** | Not executed |
+| T20 | Repeated execution | Pass (round 4, two fresh sessions) | Not executed |
 | T21 | Shareable page published by default | Pass (round 3, live) | n/a |
-| T22 | No publishing tool available | **Not executed** | n/a |
+| T22 | No publishing tool available | Pass (round 4, fresh session) | n/a |
 
 Totals for round 2: 19 tests executed as live `/flowguard` invocations, 19 passed, 0 failed. T20 and the planned T11 variant were not executed. All 19 runs shared one session; see the limits above.
 
-Round 3 (2026-10-27, after the shareable page feature was added): T21 executed live and passed. T22 not executed. T01 to T19 were not re-run after this change; the change only adds Step 6 and renumbers later steps.
+Round 3 (2026-10-27, after the shareable page feature was added): T21 executed live and passed. T01 to T19 were not re-run after this change; the change only adds Step 6 and renumbers later steps.
+
+Round 4 (2026-10-27, fresh headless sessions): once the Claude Code CLI was logged in, T20 (two runs), T22 and the planned T11 variant were each run with `claude -p` as a separate fresh session from the repository root, with no MCP servers connected. All passed. Each session was independent of the others and of the authoring session, but grading was done by the authoring session. Totals across all rounds: 22 of 22 tests have a recorded live pass; no test has failed.
 
 ---
 
@@ -145,7 +147,8 @@ Round 3 (2026-10-27, after the shareable page feature was added): T21 executed l
 - **Actual condition:** a Figma MCP server was connected in the live session too, so the planned condition could not be reproduced. The run made one real `get_metadata` call, which returned `Invalid fileKey argument` (the tool requires a key of at least 22 characters).
 - **Expected findings:** clear statement of what failed; no screens described; fallback options; no credential requests.
 - **Actual result:** Stated the exact error and why; described no screens; asked for a corrected link, sharing with the connected account, or exports; offered a provisional planning checklist; requested no credentials and changed no settings. [runs/t11-live.md](runs/t11-live.md)
-- **Verdict:** Pass for the access-failure variant. The "no Figma tool connected" variant: **Not executed**.
+- **Verdict:** Pass for the access-failure variant.
+- **Round 4 (no Figma tool variant):** run in a fresh `claude -p` session with no MCP servers. It stated that no Figma tool was connected, retrieved and described no screens, did not ask for credentials, asked for exports, a working link or descriptions, and offered a provisional onboarding checklist clearly labelled as not an audit. [runs/t11-no-figma-live.md](runs/t11-no-figma-live.md) **Verdict: Pass.** Two observations led to small SKILL.md clarifications afterwards: the session also tried to fetch the Figma URL with a web-fetch tool (permission was not granted), and it skipped the shareable page because nothing had been audited, a case Step 6 did not cover.
 
 ## T12: Large flow with multiple branches
 
@@ -212,9 +215,9 @@ Round 3 (2026-10-27, after the shareable page feature was added): T21 executed l
 ## T20: Repeated execution with identical inputs
 
 - **Input:** T02 prompt run twice in two separate fresh sessions.
-- **Actual result:** Not executed.
-- **Verdict:** Not executed.
-- **Explanation:** this needs two independent `/flowguard` sessions. The live round ran in one session started by another session, and that session cannot start further sessions; the headless CLI is not logged in. Informal observation only, not counted as a result: the live T02 output and the round 1 T02 output (different sessions, but round 1 was not a `/flowguard` invocation) report the same findings F01 P1, F02 P1, F03 P3 with the same screen IDs S01 to S03.
+- **Actual result (round 4):** two separate fresh `claude -p` sessions ran the identical T02 prompt. Both reported F01 P1 (no wrong-credentials error, R03) and F02 P1 (no account-locked state, R04), both classified Missing from supplied evidence, both with the same reason for not using P0. Neither reported the optional P3 network-failure item that earlier rounds included, which the pass criteria allow. Quick mode did not list screen IDs in either run. Both sessions tried to publish a page; the headless permission mode refused it, and both kept the report in chat, offered a local `.html` file, and wrote nothing into the project. [runs/t20-run1-live.md](runs/t20-run1-live.md), [runs/t20-run2-live.md](runs/t20-run2-live.md)
+- **Verdict:** Pass.
+- **Earlier note:** this needs two independent `/flowguard` sessions. The live round ran in one session started by another session, and that session cannot start further sessions; the headless CLI is not logged in. Informal observation only, not counted as a result: the live T02 output and the round 1 T02 output (different sessions, but round 1 was not a `/flowguard` invocation) report the same findings F01 P1, F02 P1, F03 P3 with the same screen IDs S01 to S03.
 
 ## T21: Shareable report page published by default
 
@@ -228,9 +231,9 @@ Round 3 (2026-10-27, after the shareable page feature was added): T21 executed l
 ## T22: No publishing tool available
 
 - **Input:** any FlowGuard prompt in an environment without a page-publishing tool (for example the Claude Code terminal).
-- **Actual result:** Not executed.
-- **Verdict:** Not executed.
-- **Explanation:** the only session available had the `Artifact` tool, so the fallback path (one-sentence notice, offer of a local `.html` file, nothing written without consent) has not been observed.
+- **Actual result (round 4):** fresh `claude -p` session with the publishing tool removed (`--disallowedTools Artifact`). The report (F01 P1, F02 P1) stayed in chat. The reply said no page-publishing tool was available and offered to save the report and a self-contained `.html` file. `git status` showed nothing written to the project. [runs/t22-live.md](runs/t22-live.md)
+- **Verdict:** Pass.
+- **Related observation:** in T20's two sessions the publishing tool existed but headless mode refused permission. Both handled it as "publishing failed": they kept the report in chat, offered a local file, and wrote nothing into the project. The page drafts went only to each session's temporary scratch folder.
 
 ---
 

@@ -240,7 +240,7 @@ Full rules are in [severity-rubric.md](.claude/skills/flowguard/references/sever
 - No completeness percentage is produced in version 1, by design.
 - Output quality depends on the model and on the clarity of the inputs. Two runs on the same input may differ in wording and in optional low-priority items.
 - Shareable pages need a publishing tool in your environment; the Claude Code terminal gets the local `.html` fallback instead.
-- Live `/flowguard` invocations have been tested in one shared session; one fresh session per test and repeatability across sessions have not yet been tested (see [Testing](#testing)).
+- Most tests ran in one shared session; only T11, T20 and T22 have been run in their own fresh sessions (see [Testing](#testing)).
 
 ## Testing
 
@@ -254,7 +254,8 @@ Current status, stated plainly:
 - The two defects found in the earlier author-executed round (a summary count that did not match the diagram, and an incomplete JSON export) did not recur in the live round.
 - Mermaid diagrams written during the live round were checked by rule and by edge counts but not rendered, because no Mermaid renderer was available to that session. Diagrams from the earlier round were rendered with Mermaid 11.4.1. Live JSON exports were parsed with `python3 -m json.tool`.
 - The earlier author-executed round (the skill instructions followed by hand, before the skill could be loaded) is kept in `tests/runs/tNN-run.md` for comparison.
-- **Shareable pages (round 3):** T21 passed live: the skill published a private page and returned its link. The page template was also rendered locally with a full audit, and its diagram rendered correctly. T22 (no publishing tool, local `.html` fallback) has not been executed, and how published pages render inside claude.ai was not checked.
+- **Shareable pages (round 3):** T21 passed live: the skill published a private page and returned its link. The page template was also rendered locally with a full audit, and its diagram rendered correctly. How published pages render inside claude.ai was not checked.
+- **Fresh-session round (round 4):** with the CLI logged in, T20 (the same prompt in two separate fresh sessions), T22 (no publishing tool) and the "no Figma tool" T11 variant were each run as their own `claude -p` session. All passed: both T20 runs found the same two P1 gaps with the same labels, and the fallbacks behaved as designed. All 22 tests now have a recorded pass, though grading was still done by the authoring session.
 
 To run a test yourself, open the repository in a fresh Claude Code session and run a prompt such as:
 
@@ -315,7 +316,7 @@ Contributions are welcome.
 
 ## Before public release
 
-- Run T20 (two separate sessions) and, ideally, each test in its own fresh session, then update the recorded results.
+- Optionally re-run T01 to T19 each in its own fresh `claude -p` session and update the recorded results.
 - Test with real image and PDF exports. (A real Figma file has been tested.)
 - Check that the repository name `flowguard` is available on your hosting platform and search for existing trademarks or products named FlowGuard. The name has not been cleared.
 

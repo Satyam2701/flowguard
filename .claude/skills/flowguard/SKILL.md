@@ -51,7 +51,7 @@ For each referenced artifact, try to read it with the tools you actually have. R
 - **Folders**: list them, then read relevant files. Record files skipped.
 - **Unsupported or corrupted files** (for example `.fig`, `.sketch`, `.xd`, password-protected or empty files): explain why they could not be used and ask for an export (PNG, PDF) or a text description.
 - **URLs to live apps**: inspect only if a browser tool is available and the user wants it. Otherwise ask for screenshots. Never sign in, submit forms, or enter credentials on the user's behalf.
-- **Figma links**: follow the Figma procedure in [references/flow-audit-framework.md](references/flow-audit-framework.md#figma-access-procedure). Figma is optional. If no Figma tool exists or access fails, say exactly what failed and fall back to exported frames, screenshots, or descriptions.
+- **Figma links**: follow the Figma procedure in [references/flow-audit-framework.md](references/flow-audit-framework.md#figma-access-procedure). Figma is optional. If no Figma tool exists or access fails, say exactly what failed and fall back to exported frames, screenshots, or descriptions. Do not try to read a Figma link with a general web-fetch tool: it needs a login and returns no design data.
 
 ### Step 3: Decide whether you can start
 
@@ -99,7 +99,7 @@ Use [references/report-template.md](references/report-template.md). Markdown is 
 
 ### Step 6: Publish a shareable report page (default)
 
-After the Markdown report, give the findings a page people can open and share. Do this on every run unless the user says "chat only" or "no page", or asks only for a diagram or a yes/no answer.
+After the Markdown report, give the findings a page people can open and share. Do this on every run unless the user says "chat only" or "no page", or asks only for a diagram or a yes/no answer. If no design or requirement evidence could be read at all (for example a Figma link that failed and nothing else was supplied), skip the page and say why.
 
 1. **Check the tools you actually have.** Treat publishing as available only if a tool that publishes an HTML page appears in your tool list (for example the `Artifact` tool in the Claude desktop app or on claude.ai). Follow that host's own rules for pages, including any design guidance it says to load first.
 2. **Ask first when the material is sensitive.** If the user called the designs or requirements confidential, under NDA, or internal-only, ask before publishing, because a published page leaves this machine even when it starts private.
