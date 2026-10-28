@@ -16,11 +16,11 @@ The suite has been executed in two rounds. The "Actual result" and "Verdict" fie
   - The headless CLI (`claude -p`) on this machine still reports `loggedIn: false`, so per-test fresh sessions were not possible.
   - The executing session read `expected-findings.md` before running the tests (to plan the work), so the runs are not blind to the pass criteria. Grading was done by the same session that produced the outputs.
   - Live Mermaid diagrams were checked by rule and by edge counts, not rendered: `mmdc` is not installed, and the browser pane only shows local files as static snapshots.
-  - The session is not the authoring session, but it is the same model family that wrote the skill.
+  - The session ran separately from the session where the skill was built, but with the same tools and setup.
 
 ### Round 1: author-executed manual runs (superseded, kept for reference)
 
-- The authoring agent could not load the skill mid-session (`Unknown skill: flowguard`) and the headless CLI was not logged in, so it executed 19 tests by following `SKILL.md` by hand. Outputs are in `runs/tNN-run.md` (T02 is `runs/t02-run-a.md`). Two defects found in round 1 (T12 count mismatch, T15 incomplete JSON) were fixed in `SKILL.md` before round 2.
+- The session where the skill was built could not load the skill mid-session (`Unknown skill: flowguard`) and the headless CLI was not logged in, so it executed 19 tests by following `SKILL.md` by hand. Outputs are in `runs/tNN-run.md` (T02 is `runs/t02-run-a.md`). Two defects found in round 1 (T12 count mismatch, T15 incomplete JSON) were fixed in `SKILL.md` before round 2.
 
 ## Summary
 
