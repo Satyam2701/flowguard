@@ -1,0 +1,37 @@
+{
+  "name": "flowguard-skill",
+  "version": "1.0.0",
+  "description": "FlowGuard: a Claude Code skill that catches missing screens, states, and edge cases in product flows before development.",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "skill",
+    "ux",
+    "product-design",
+    "user-flow",
+    "design-review",
+    "edge-cases"
+  ],
+  "homepage": "https://github.com/Satyam2701/flowguard#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Satyam2701/flowguard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Satyam2701/flowguard/issues"
+  },
+  "license": "MIT",
+  "author": "Satyam Tiwari",
+  "bin": {
+    "flowguard-skill": "bin/install.js"
+  },
+  "files": [
+    "bin/",
+    ".claude/skills/flowguard/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  }
+}

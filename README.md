@@ -73,32 +73,46 @@ Designers also work with very different levels of input. Some have a full PRD. M
 
 **Requirements**
 
-- [Claude Code](https://code.claude.com/docs) with skills support.
-- Nothing else. No API keys, hosting, or packages. Figma integration is optional.
+- [Claude Code](https://code.claude.com/docs) with skills support (terminal, desktop app, or IDE).
+- [Node.js](https://nodejs.org) 18.17 or newer, only for the one-line installer.
+- No API keys, hosting, or paid services. Figma integration is optional.
 
-**Option A: use it in one project**
-
-Copy the skill folder into your project:
-
-```bash
-mkdir -p .claude/skills && cp -R path/to/flowguard/.claude/skills/flowguard .claude/skills/
-```
-
-**Option B: use it in all your projects**
+**Install in one line (recommended)**
 
 ```bash
-mkdir -p ~/.claude/skills && cp -R path/to/flowguard/.claude/skills/flowguard ~/.claude/skills/
+npx flowguard-skill
 ```
 
-**Option C: work inside this repository**
+This copies FlowGuard into `~/.claude/skills/flowguard`, so it works in every project you open with Claude Code.
 
-Clone the repository and start Claude Code in its root. The skill is already at `.claude/skills/flowguard/`.
+| Command | What it does |
+| --- | --- |
+| `npx flowguard-skill` | Install for your user account (all projects) |
+| `npx flowguard-skill --project` | Install into the current project only (`./.claude/skills`), so you can commit it for your team |
+| `npx flowguard-skill --force` | Update or replace an existing install. Your old copy is moved to `.claude/flowguard-backups/` first. |
+| `npx flowguard-skill --uninstall` | Remove it (add `--project` for a project install) |
+
+The installer has no dependencies, never overwrites an existing copy without `--force`, and touches nothing outside the `.claude` folder.
+
+**Then:** start a **new** Claude Code session, type `/` and check that `flowguard` is in the menu, and run it:
+
+```text
+/flowguard Review ./designs/checkout.pdf against ./docs/prd.md
+```
+
+**Install without npm**
+
+Clone the repository and copy the skill folder yourself:
 
 ```bash
 git clone https://github.com/Satyam2701/flowguard.git
 ```
 
-Start a **new** Claude Code session after installing so the skill is discovered. Type `/` and look for `flowguard` in the menu to confirm it loaded.
+```bash
+mkdir -p ~/.claude/skills && cp -R flowguard/.claude/skills/flowguard ~/.claude/skills/
+```
+
+To try it without installing, start Claude Code inside the cloned repository. The skill is already at `.claude/skills/flowguard/`.
 
 ## Usage
 
@@ -300,6 +314,9 @@ flowguard/
 │   ├── fixtures/
 │   ├── runs/
 │   └── output/
+├── bin/
+│   └── install.js
+├── package.json
 ├── README.md
 └── LICENSE
 ```
@@ -319,6 +336,7 @@ Contributions are welcome.
 - Optionally re-run T01 to T19 each in its own fresh `claude -p` session and update the recorded results.
 - Test with real image and PDF exports. (A real Figma file has been tested.)
 - Check that the repository name `flowguard` is available on your hosting platform and search for existing trademarks or products named FlowGuard. The name has not been cleared.
+- Publish the installer to npm (free): create an account at npmjs.com, run `npm login`, then `npm publish` from the repository root. Pick the final name first, because npm package names are hard to change later.
 
 ## License
 
