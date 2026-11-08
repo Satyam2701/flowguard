@@ -27,7 +27,7 @@ Created by **Satyam Tiwari, Product Designer**.
 - [Privacy and safe file handling](#privacy-and-safe-file-handling)
 - [Repository structure](#repository-structure)
 - [Contributing](#contributing)
-- [Before public release](#before-public-release)
+- [Project status](#project-status)
 - [License](#license)
 - [Author](#author)
 
@@ -314,6 +314,12 @@ flowguard/
 │   ├── fixtures/
 │   ├── runs/
 │   └── output/
+├── CLAUDE.md
+├── MIGRATION_GUIDE.md
+├── BACKUP_STATUS.md
+├── docs/
+├── scripts/
+│   └── setup-new-machine.sh
 ├── bin/
 │   └── install.js
 ├── package.json
@@ -331,12 +337,9 @@ Contributions are welcome.
 4. Use fictional data in fixtures and examples. Never commit real customer data or real credentials.
 5. Do not add dependencies, scripts, or required integrations without a clear need.
 
-## Before public release
+## Project status
 
-- Optionally re-run T01 to T19 each in its own fresh `claude -p` session and update the recorded results.
-- Test with real image and PDF exports. (A real Figma file has been tested.)
-- Check that the repository name `flowguard` is available on your hosting platform and search for existing trademarks or products named FlowGuard. The name has not been cleared.
-- Publish the installer to npm (free): create an account at npmjs.com, run `npm login`, then `npm publish` from the repository root. Pick the final name first, because npm package names are hard to change later.
+Version 1.0.0 is released on GitHub and npm. Open items, including the unresolved name overlap with another open-source "FlowGuard" tool, are tracked in [docs/STATUS.md](docs/STATUS.md). Maintainers: see [CLAUDE.md](CLAUDE.md) for conventions and release steps, and [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) to set up a new machine.
 
 ## License
 
